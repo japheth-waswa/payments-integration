@@ -26,7 +26,7 @@ class PaymentServiceImplTest {
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private IPaymentService paymentService;
-    private  PaymentDto paymentDto1,paymentDto2,paymentDto3;
+    private PaymentDto paymentDto1, paymentDto2, paymentDto3;
     private Payment payment1;
 
     @BeforeEach
@@ -105,10 +105,10 @@ class PaymentServiceImplTest {
         paymentService.savePayment(paymentDto2);
         paymentService.savePayment(paymentDto3);
 
-        List<PaymentDto> payments  = paymentService.getPayments(1,1);
+        List<PaymentDto> payments = paymentService.getPayments(1, 1);
 
-        assertEquals(1,payments.size());
-        assertEquals(paymentDto2.getOrganizationRefNumber(),payments.get(0).getOrganizationRefNumber());
+        assertEquals(1, payments.size());
+        assertEquals(paymentDto2.getOrganizationRefNumber(), payments.get(0).getOrganizationRefNumber());
     }
 
     @Test
@@ -117,11 +117,11 @@ class PaymentServiceImplTest {
         paymentService.savePayment(paymentDto3);
         paymentService.savePayment(paymentDto1);
 
-        List<PaymentDto> payments  = paymentService.getPayments(0,3);
+        List<PaymentDto> payments = paymentService.getPayments(0, 3);
         System.out.println(payments);
 
-        assertEquals(3,payments.size());
-        assertEquals(paymentDto1.getOrganizationRefNumber(),payments.get(2).getOrganizationRefNumber());
+        assertEquals(3, payments.size());
+        assertEquals(paymentDto1.getOrganizationRefNumber(), payments.get(2).getOrganizationRefNumber());
     }
 
     @Test
@@ -129,7 +129,7 @@ class PaymentServiceImplTest {
         paymentService.savePayment(paymentDto1);
         paymentService.savePayment(paymentDto3);
         paymentService.savePayment(paymentDto2);
-        assertThrows(ResourceNotFoundException.class,()->paymentService.getPayments(7,10));
+        assertThrows(ResourceNotFoundException.class, () -> paymentService.getPayments(7, 10));
     }
 
 
@@ -141,17 +141,178 @@ class PaymentServiceImplTest {
         paymentService.savePayment(paymentDto2);
 
         //retrieve
-        List<PaymentDto> payments = paymentService.getPaymentsByEntityRef(paymentDto2.getEntityRef(),0,10);
-        System.out.println(payments);
+        List<PaymentDto> payments = paymentService.getPaymentsByEntityRef(paymentDto2.getEntityRef(), 0, 10);
 
-        assertEquals(2,payments.size());
+        assertEquals(2, payments.size());
         assertEquals(paymentDto2.getOrganizationRefNumber(), payments.get(1).getOrganizationRefNumber());
     }
 
     @Test
     void getPaymentByEntityRef_does_not_exists() {
         //retrieve
-        assertThrows(ResourceNotFoundException.class, () -> paymentService.getPaymentsByEntityRef("XYZ",0,10));
+        assertThrows(ResourceNotFoundException.class, () -> paymentService.getPaymentsByEntityRef("XYZ", 0, 10));
+    }
+
+    @Test
+    void getPaymentsByEntityRefAndPaymentMode_exists() {
+        //save
+        paymentService.savePayment(paymentDto1);
+        paymentService.savePayment(paymentDto3);
+        paymentService.savePayment(paymentDto2);
+
+        //retrieve
+        List<PaymentDto> payments = paymentService.getPaymentsByEntityRefAndPaymentMode(paymentDto3.getEntityRef(), paymentDto3.getPaymentMode(), 0, 10);
+        assertEquals(1, payments.size());
+        assertEquals(paymentDto3.getOrganizationRefNumber(), payments.get(0).getOrganizationRefNumber());
+    }
+
+    @Test
+    void getPaymentsByEntityRefAndPaymentMode_does_not_exist() {
+        //save
+        paymentService.savePayment(paymentDto1);
+        paymentService.savePayment(paymentDto3);
+        paymentService.savePayment(paymentDto2);
+
+        //retrieve
+        assertThrows(ResourceNotFoundException.class, () -> paymentService.getPaymentsByEntityRefAndPaymentMode(paymentDto3.getEntityRef(), paymentDto2.getPaymentMode(), 0, 10));
+    }
+
+    @Test
+    void getPaymentsByEntityRefAndPaymentOrganization_exists() {
+        //save
+        paymentService.savePayment(paymentDto1);
+        paymentService.savePayment(paymentDto3);
+        paymentService.savePayment(paymentDto2);
+
+        //retrieve
+        List<PaymentDto> payments = paymentService.getPaymentsByEntityRefAndPaymentOrganization(paymentDto2.getEntityRef(), paymentDto2.getPaymentOrganization(), 0, 10);
+        assertEquals(1, payments.size());
+        assertEquals(paymentDto2.getOrganizationRefNumber(), payments.get(0).getOrganizationRefNumber());
+    }
+
+    @Test
+    void getPaymentsByEntityRefAndPaymentOrganization_does_not_exist() {
+        //save
+        paymentService.savePayment(paymentDto1);
+        paymentService.savePayment(paymentDto3);
+        paymentService.savePayment(paymentDto2);
+
+        //retrieve
+        assertThrows(ResourceNotFoundException.class, () -> paymentService.getPaymentsByEntityRefAndPaymentOrganization(paymentDto2.getEntityRef(), paymentDto3.getPaymentOrganization(), 0, 10));
+    }
+
+    @Test
+    void getPaymentsByEntityRefAndOrganizationRefNumber_exists() {
+        //save
+        paymentService.savePayment(paymentDto1);
+        paymentService.savePayment(paymentDto3);
+        paymentService.savePayment(paymentDto2);
+
+        //retrieve
+        List<PaymentDto> payments = paymentService.getPaymentsByEntityRefAndOrganizationRefNumber(paymentDto3.getEntityRef(), paymentDto3.getOrganizationRefNumber(), 0, 10);
+        assertEquals(1, payments.size());
+        assertEquals(paymentDto3.getOrganizationRefNumber(), payments.get(0).getOrganizationRefNumber());
+    }
+
+    @Test
+    void getPaymentsByEntityRefAndOrganizationRefNumber_does_not_exist() {
+        //save
+        paymentService.savePayment(paymentDto1);
+        paymentService.savePayment(paymentDto2);
+        paymentService.savePayment(paymentDto3);
+
+        //retrieve
+        assertThrows(ResourceNotFoundException.class, () -> paymentService.getPaymentsByEntityRefAndOrganizationRefNumber(paymentDto2.getEntityRef(), paymentDto3.getOrganizationRefNumber(), 0, 10));
+    }
+
+    @Test
+    void getPaymentsByEntityRefAndPaymentOrganizationAndOrganizationRefNumber_exists() {
+        //save
+        paymentService.savePayment(paymentDto1);
+        paymentService.savePayment(paymentDto3);
+        paymentService.savePayment(paymentDto2);
+
+        //retrieve
+        List<PaymentDto> payments = paymentService.getPaymentsByEntityRefAndPaymentOrganizationAndOrganizationRefNumber(paymentDto2.getEntityRef(), paymentDto2.getPaymentOrganization(), paymentDto2.getOrganizationRefNumber(), 0, 10);
+        assertEquals(1, payments.size());
+        assertEquals(paymentDto2.getOrganizationRefNumber(), payments.get(0).getOrganizationRefNumber());
+    }
+
+    @Test
+    void getPaymentsByEntityRefAndPaymentOrganizationAndOrganizationRefNumber_does_not_exist() {
+        //save
+        paymentService.savePayment(paymentDto3);
+        paymentService.savePayment(paymentDto2);
+        paymentService.savePayment(paymentDto1);
+        assertThrows(ResourceNotFoundException.class, () -> paymentService.getPaymentsByEntityRefAndPaymentOrganizationAndOrganizationRefNumber(paymentDto1.getEntityRef(), paymentDto3.getPaymentOrganization(), payment1.getOrganizationRefNumber(), 0, 10));
+    }
+
+    @Test
+    void getPaymentsByOrganizationRefNumber_exists() {
+        //save
+        paymentService.savePayment(paymentDto3);
+        paymentService.savePayment(paymentDto1);
+        paymentService.savePayment(paymentDto2);
+
+        //retrieve
+        List<PaymentDto> payments = paymentService.getPaymentsByOrganizationRefNumber(paymentDto1.getOrganizationRefNumber(), 0, 10);
+        assertEquals(1, payments.size());
+        assertEquals(paymentDto1.getOrganizationRefNumber(), payments.get(0).getOrganizationRefNumber());
+    }
+
+    @Test
+    void getPaymentsByOrganizationRefNumber_does_not_exist() {
+        //save
+        paymentService.savePayment(paymentDto2);
+        paymentService.savePayment(paymentDto3);
+        paymentService.savePayment(paymentDto1);
+        assertThrows(ResourceNotFoundException.class, () -> paymentService.getPaymentsByOrganizationRefNumber("9876", 0, 10));
+    }
+
+    @Test
+    void getPaymentsByPaymentMode_exists(){
+        //save
+        paymentService.savePayment(paymentDto3);
+        paymentService.savePayment(paymentDto1);
+        paymentService.savePayment(paymentDto2);
+
+        //retrieve
+        List<PaymentDto> payments1  = paymentService.getPaymentsByPaymentMode(paymentDto3.getPaymentMode(),0,10);
+        assertEquals(2,payments1.size());
+
+        //retrieve
+        List<PaymentDto> payments2  = paymentService.getPaymentsByPaymentMode(paymentDto3.getPaymentMode(),1,1);
+        assertEquals(paymentDto1.getOrganizationRefNumber(),payments2.get(0).getOrganizationRefNumber());
+    }
+
+    @Test
+    void getPaymentsByPaymentMode_does_not_exist(){
+        //save
+        paymentService.savePayment(paymentDto3);
+        paymentService.savePayment(paymentDto1);
+        assertThrows(ResourceNotFoundException.class,()->paymentService.getPaymentsByPaymentMode(paymentDto2.getPaymentMode(),0,Integer.MAX_VALUE));
+    }
+
+    @Test
+    void getPaymentsByPaymentOrganization_exists(){
+        //save
+        paymentService.savePayment(paymentDto3);
+        paymentService.savePayment(paymentDto1);
+        paymentService.savePayment(paymentDto2);
+
+        //retrieve
+        List<PaymentDto> payments = paymentService.getPaymentsByPaymentOrganization(paymentDto1.getPaymentOrganization(),0,Integer.MAX_VALUE);
+        assertEquals(1,payments.size());
+        assertEquals(paymentDto1.getOrganizationRefNumber(),payments.get(0).getOrganizationRefNumber());
+    }
+
+    @Test
+    void getPaymentsByPaymentOrganization_does_not_exist(){
+        //save
+        paymentService.savePayment(paymentDto1);
+        paymentService.savePayment(paymentDto2);
+
+        assertThrows(ResourceNotFoundException.class,()->paymentService.getPaymentsByPaymentOrganization(paymentDto3.getPaymentOrganization(),0,10));
     }
 
     @Test

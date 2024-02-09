@@ -1,5 +1,7 @@
 package com.elijahwaswa.paymentservice.service.impl;
 
+import com.elijahwaswa.basedomains.enums.PaymentMode;
+import com.elijahwaswa.basedomains.enums.PaymentOrganization;
 import com.elijahwaswa.basedomains.exception.ErrorCode;
 import com.elijahwaswa.basedomains.utils.Helpers;
 import com.elijahwaswa.paymentservice.dto.PaymentDto;
@@ -21,45 +23,78 @@ public class PaymentServiceImpl implements IPaymentService {
     private PaymentRepository paymentRepository;
     private ModelMapper modelMapper;
 
+    private List<PaymentDto> parsePayments(Page<Payment> payments, String notFoundMessage) {
+        if (payments.isEmpty())
+            throw new ResourceNotFoundException(ErrorCode.PAYMENTS_NOT_FOUND, notFoundMessage);
+
+        return payments
+                .stream()
+                .map(payment -> modelMapper.map(payment, PaymentDto.class))
+                .collect(Collectors.toList());
+    }
+
     @Override
     public PaymentDto savePayment(PaymentDto paymentDto) {
-        //convert PaymentDto to Payment
         Payment payment = modelMapper.map(paymentDto, Payment.class);
-        //compute the paymentKey
         payment.setPaymentKey(computePaymentKey(payment));
-        //save payment
         Payment savedPayment = paymentRepository.save(payment);
-        //map Payment to PaymentDto
         return modelMapper.map(savedPayment, PaymentDto.class);
     }
 
     @Override
     public List<PaymentDto> getPayments(int pageNumber, int pageSize) {
-
-        Page<Payment> paymentPage = paymentRepository.findAll(Helpers.buildPageable(pageNumber, pageSize));
-
-        if (paymentPage.isEmpty())
-            throw new ResourceNotFoundException(ErrorCode.PAYMENTS_NOT_FOUND, String.format("Payments not found with page number[%s] and page size[%s]", pageNumber, pageSize));
-
-        return paymentPage
-                .stream()
-                .map(payment -> modelMapper.map(payment, PaymentDto.class))
-                .collect(Collectors.toList());
+        Page<Payment> payments = paymentRepository.findAll(Helpers.buildPageable(pageNumber, pageSize));
+        return parsePayments(payments, String.format("Payments not found with page number[%s] and page size[%s]", pageNumber, pageSize));
     }
 
 
     @Override
     public List<PaymentDto> getPaymentsByEntityRef(String entityRef, int pageNumber, int pageSize) {
         Page<Payment> payments = paymentRepository.findAllByEntityRef(entityRef, Helpers.buildPageable(pageNumber, pageSize));
+        return parsePayments(payments, String.format("Payments for this entityRef[%s] not found with page number[%s] and page size[%s]", entityRef, pageNumber, pageSize));
 
-        if (payments.isEmpty())
-            throw new ResourceNotFoundException(ErrorCode.PAYMENTS_NOT_FOUND, String.format("Payments for this entityRef not found with page number[%s] and page size[%s]", pageNumber, pageSize));
+    }
 
-        return payments
-                .stream()
-                .map(payment -> modelMapper.map(payment, PaymentDto.class))
-                .collect(Collectors.toList());
+    @Override
+    public List<PaymentDto> getPaymentsByEntityRefAndPaymentMode(String entityRef, PaymentMode paymentMode, int pageNumber, int pageSize) {
+        Page<Payment> payments = paymentRepository.findAllByEntityRefAndPaymentMode(entityRef, paymentMode, Helpers.buildPageable(pageNumber, pageSize));
+        return parsePayments(payments, String.format("Payments for this entityRef[%s] and paymentMode[%s] not found with page number[%s] and page size[%s]", entityRef, paymentMode, pageNumber, pageSize));
+    }
 
+    @Override
+    public List<PaymentDto> getPaymentsByEntityRefAndPaymentOrganization(String entityRef, PaymentOrganization paymentOrganization, int pageNumber, int pageSize) {
+        Page<Payment> payments = paymentRepository.findAllByEntityRefAndPaymentOrganization(entityRef, paymentOrganization, Helpers.buildPageable(pageNumber, pageSize));
+        return parsePayments(payments, String.format("Payments for this entity ref[%s] and payment organization[%s] not found!", entityRef, paymentOrganization));
+    }
+
+    @Override
+    public List<PaymentDto> getPaymentsByEntityRefAndOrganizationRefNumber(String entityRef, String organizationRefNumber, int pageNumber, int pageSize) {
+        Page<Payment> payments = paymentRepository.findAllByEntityRefAndOrganizationRefNumber(entityRef, organizationRefNumber, Helpers.buildPageable(pageNumber, pageSize));
+        return parsePayments(payments, String.format("Payments for this entity ref[%s] and organization ref number[%s] not found!", entityRef, organizationRefNumber));
+    }
+
+    @Override
+    public List<PaymentDto> getPaymentsByEntityRefAndPaymentOrganizationAndOrganizationRefNumber(String entityRef, PaymentOrganization paymentOrganization, String organizationRefNumber, int pageNumber, int pageSize) {
+        Page<Payment> payments = paymentRepository.findAllByEntityRefAndPaymentOrganizationAndOrganizationRefNumber(entityRef, paymentOrganization, organizationRefNumber, Helpers.buildPageable(pageNumber, pageSize));
+        return parsePayments(payments, String.format("Payments for this entity ref[%s],payment organization[%s] and organization ref number[%s] not found!", entityRef, paymentOrganization, organizationRefNumber));
+    }
+
+    @Override
+    public List<PaymentDto> getPaymentsByOrganizationRefNumber(String organizationRefNumber, int pageNumber, int pageSize) {
+        Page<Payment> payments = paymentRepository.findAllByOrganizationRefNumber(organizationRefNumber, Helpers.buildPageable(pageNumber, pageSize));
+        return parsePayments(payments, String.format("Payments for this organization ref number[%s] not found!", organizationRefNumber));
+    }
+
+    @Override
+    public List<PaymentDto> getPaymentsByPaymentMode(PaymentMode paymentMode, int pageNumber, int pageSize) {
+        Page<Payment> payments = paymentRepository.findAllByPaymentMode(paymentMode, Helpers.buildPageable(pageNumber, pageSize));
+        return parsePayments(payments, String.format("Payments for this payment mode[%s] not found!", paymentMode));
+    }
+
+    @Override
+    public List<PaymentDto> getPaymentsByPaymentOrganization(PaymentOrganization paymentOrganization, int pageNumber, int pageSize) {
+        Page<Payment> payments = paymentRepository.findAllByPaymentOrganization(paymentOrganization, Helpers.buildPageable(pageNumber, pageSize));
+        return parsePayments(payments, String.format("Payments for this organization[%s] not found!", paymentOrganization));
     }
 
     @Override
