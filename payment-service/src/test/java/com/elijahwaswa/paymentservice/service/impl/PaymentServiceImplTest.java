@@ -5,8 +5,7 @@ import com.elijahwaswa.basedomains.enums.PaymentOrganization;
 import com.elijahwaswa.paymentservice.dto.PaymentDto;
 import com.elijahwaswa.paymentservice.entity.Payment;
 import com.elijahwaswa.paymentservice.exception.ResourceNotFoundException;
-import com.elijahwaswa.paymentservice.service.IPaymentService;
-import org.junit.jupiter.api.AfterEach;
+import com.elijahwaswa.paymentservice.service.PaymentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ class PaymentServiceImplTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private IPaymentService paymentService;
+    private PaymentService paymentService;
     private PaymentDto paymentDto1, paymentDto2, paymentDto3;
     private Payment payment1;
 
@@ -72,9 +71,6 @@ class PaymentServiceImplTest {
         paymentDto3.setReceivedDate(LocalDateTime.now());
     }
 
-    @AfterEach
-    void tearDown() {
-    }
 
     void truncateH2DB() {
         //truncate or delete data from all tables
@@ -270,49 +266,49 @@ class PaymentServiceImplTest {
     }
 
     @Test
-    void getPaymentsByPaymentMode_exists(){
+    void getPaymentsByPaymentMode_exists() {
         //save
         paymentService.savePayment(paymentDto3);
         paymentService.savePayment(paymentDto1);
         paymentService.savePayment(paymentDto2);
 
         //retrieve
-        List<PaymentDto> payments1  = paymentService.getPaymentsByPaymentMode(paymentDto3.getPaymentMode(),0,10);
-        assertEquals(2,payments1.size());
+        List<PaymentDto> payments1 = paymentService.getPaymentsByPaymentMode(paymentDto3.getPaymentMode(), 0, 10);
+        assertEquals(2, payments1.size());
 
         //retrieve
-        List<PaymentDto> payments2  = paymentService.getPaymentsByPaymentMode(paymentDto3.getPaymentMode(),1,1);
-        assertEquals(paymentDto1.getOrganizationRefNumber(),payments2.get(0).getOrganizationRefNumber());
+        List<PaymentDto> payments2 = paymentService.getPaymentsByPaymentMode(paymentDto3.getPaymentMode(), 1, 1);
+        assertEquals(paymentDto1.getOrganizationRefNumber(), payments2.get(0).getOrganizationRefNumber());
     }
 
     @Test
-    void getPaymentsByPaymentMode_does_not_exist(){
+    void getPaymentsByPaymentMode_does_not_exist() {
         //save
         paymentService.savePayment(paymentDto3);
         paymentService.savePayment(paymentDto1);
-        assertThrows(ResourceNotFoundException.class,()->paymentService.getPaymentsByPaymentMode(paymentDto2.getPaymentMode(),0,Integer.MAX_VALUE));
+        assertThrows(ResourceNotFoundException.class, () -> paymentService.getPaymentsByPaymentMode(paymentDto2.getPaymentMode(), 0, Integer.MAX_VALUE));
     }
 
     @Test
-    void getPaymentsByPaymentOrganization_exists(){
+    void getPaymentsByPaymentOrganization_exists() {
         //save
         paymentService.savePayment(paymentDto3);
         paymentService.savePayment(paymentDto1);
         paymentService.savePayment(paymentDto2);
 
         //retrieve
-        List<PaymentDto> payments = paymentService.getPaymentsByPaymentOrganization(paymentDto1.getPaymentOrganization(),0,Integer.MAX_VALUE);
-        assertEquals(1,payments.size());
-        assertEquals(paymentDto1.getOrganizationRefNumber(),payments.get(0).getOrganizationRefNumber());
+        List<PaymentDto> payments = paymentService.getPaymentsByPaymentOrganization(paymentDto1.getPaymentOrganization(), 0, Integer.MAX_VALUE);
+        assertEquals(1, payments.size());
+        assertEquals(paymentDto1.getOrganizationRefNumber(), payments.get(0).getOrganizationRefNumber());
     }
 
     @Test
-    void getPaymentsByPaymentOrganization_does_not_exist(){
+    void getPaymentsByPaymentOrganization_does_not_exist() {
         //save
         paymentService.savePayment(paymentDto1);
         paymentService.savePayment(paymentDto2);
 
-        assertThrows(ResourceNotFoundException.class,()->paymentService.getPaymentsByPaymentOrganization(paymentDto3.getPaymentOrganization(),0,10));
+        assertThrows(ResourceNotFoundException.class, () -> paymentService.getPaymentsByPaymentOrganization(paymentDto3.getPaymentOrganization(), 0, 10));
     }
 
     @Test

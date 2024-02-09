@@ -5,6 +5,7 @@ import com.elijahwaswa.basedomains.exception.ErrorDetails;
 import com.elijahwaswa.basedomains.exception.IErrorDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -16,26 +17,25 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleGlobalException(Exception exception, WebRequest webRequest) {
-        ErrorDetails errorDetails;
+
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        if (exception instanceof IErrorDetails iErrorDetails) {
-            errorDetails = new ErrorDetails(
-                    iErrorDetails.getTimeStamp(),
-                    exception.getMessage(),
-                    webRequest.getDescription(false),
-                    iErrorDetails.getErrorCode()
-            );
-            httpStatus = iErrorDetails.getHttStatus();
-        } else {
-            errorDetails = new ErrorDetails(
-                    LocalDateTime.now(),
-                    exception.getMessage(),
-                    webRequest.getDescription(false),
-                    ErrorCode.INTERNAL_SERVER_ERROR
-            );
-        }
+        ErrorDetails errorDetails=new ErrorDetails();
+        errorDetails.setTimestamp(LocalDateTime.now());
+        errorDetails.setMessage(exception.getMessage());
+        errorDetails.setPath(webRequest.getDescription(false));
 
+        if (exception instanceof IErrorDetails iErrorDetails) {
+            errorDetails.setTimestamp(iErrorDetails.getTimeStamp());
+            errorDetails.setErrorCode(iErrorDetails.getErrorCode());
+            httpStatus = iErrorDetails.getHttStatus();
+        }else if(exception instanceof ErrorResponse errorResponse){
+            errorDetails.setErrorCode(ErrorCode.ERROR);
+            httpStatus =  HttpStatus.valueOf(errorResponse.getStatusCode().value());
+        }else {
+            errorDetails.setErrorCode(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>(errorDetails, httpStatus);
     }
+
 }

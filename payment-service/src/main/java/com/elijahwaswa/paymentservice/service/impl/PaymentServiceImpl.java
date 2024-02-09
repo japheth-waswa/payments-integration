@@ -8,7 +8,7 @@ import com.elijahwaswa.paymentservice.dto.PaymentDto;
 import com.elijahwaswa.paymentservice.entity.Payment;
 import com.elijahwaswa.paymentservice.exception.ResourceNotFoundException;
 import com.elijahwaswa.paymentservice.repository.PaymentRepository;
-import com.elijahwaswa.paymentservice.service.IPaymentService;
+import com.elijahwaswa.paymentservice.service.PaymentService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class PaymentServiceImpl implements IPaymentService {
+public class PaymentServiceImpl implements PaymentService {
     private PaymentRepository paymentRepository;
     private ModelMapper modelMapper;
 
@@ -52,7 +52,6 @@ public class PaymentServiceImpl implements IPaymentService {
     public List<PaymentDto> getPaymentsByEntityRef(String entityRef, int pageNumber, int pageSize) {
         Page<Payment> payments = paymentRepository.findAllByEntityRef(entityRef, Helpers.buildPageable(pageNumber, pageSize));
         return parsePayments(payments, String.format("Payments for this entityRef[%s] not found with page number[%s] and page size[%s]", entityRef, pageNumber, pageSize));
-
     }
 
     @Override
