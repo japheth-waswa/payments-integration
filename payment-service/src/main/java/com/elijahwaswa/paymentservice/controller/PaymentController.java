@@ -21,7 +21,6 @@ public class PaymentController {
 
     private PaymentService paymentService;
 
-    //    @GetMapping("entity-ref")
     @GetMapping
     public ResponseEntity<List<PaymentDto>> getPayments(@RequestParam(required = false) String entityRef,
                                                         @RequestParam(required = false) PaymentMode paymentMode,
@@ -42,6 +41,5 @@ public class PaymentController {
         }
         return new ResponseEntity<>(paymentService.getPayments(pageNumber, pageSize), HttpStatus.OK);
     }
-
 
 }
