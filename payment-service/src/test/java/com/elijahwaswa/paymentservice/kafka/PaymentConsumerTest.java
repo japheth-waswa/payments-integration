@@ -33,7 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest(properties = {"spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}","spring.kafka.consumer.bootstrap-servers=${spring.embedded.kafka.brokers}"})
+@SpringBootTest(properties = {
+        "spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}",
+        "spring.kafka.consumer.bootstrap-servers=${spring.embedded.kafka.brokers}"
+})
 @EmbeddedKafka
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PaymentConsumerTest {
@@ -71,7 +74,7 @@ class PaymentConsumerTest {
     }
 
     @AfterAll
-    void shutdown(){
+    void shutdown() {
         producer.close();
     }
 
@@ -85,10 +88,9 @@ class PaymentConsumerTest {
         verify(paymentConsumer, timeout(5000).times(1))
                 .consumePaymentEvent(paymentEventArgumentCaptor.capture());
 
-        PaymentEvent paymentEvent1 = paymentEventArgumentCaptor.getValue();
-        assertNotNull(paymentEvent1);
-        assertEquals(paymentEvent.getEntityRef(),paymentEvent1.getEntityRef());
-
+        PaymentEvent kafkaPaymentEvent = paymentEventArgumentCaptor.getValue();
+        assertNotNull(kafkaPaymentEvent);
+        assertEquals(paymentEvent.getEntityRef(), kafkaPaymentEvent.getEntityRef());
     }
 
 }
