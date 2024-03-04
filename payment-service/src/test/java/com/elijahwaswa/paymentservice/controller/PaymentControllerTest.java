@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.Mockito.when;
 
@@ -43,7 +44,7 @@ class PaymentControllerTest {
     @BeforeEach
     void setup() {
         paymentDto1 = new PaymentDto();
-        paymentDto1.setId(23);
+        paymentDto1.setId(UUID.randomUUID());
         paymentDto1.setOrganizationRefNumber("xcv");
         paymentDto1.setPaymentMode(PaymentMode.BANK);
         paymentDto1.setPaymentOrganization(PaymentOrganization.COOP);
@@ -53,7 +54,7 @@ class PaymentControllerTest {
         paymentDto1.setReceivedDate(LocalDateTime.now());
 
         paymentDto2 = new PaymentDto();
-        paymentDto2.setId(7);
+        paymentDto2.setId(UUID.randomUUID());
         paymentDto2.setOrganizationRefNumber("TYR");
         paymentDto2.setPaymentMode(PaymentMode.MOBILE_MONEY);
         paymentDto2.setPaymentOrganization(PaymentOrganization.MPESA);

@@ -6,14 +6,15 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+//@Getter
+//@Setter
+//@NoArgsConstructor
+//@AllArgsConstructor
 @Data
 public class PaymentDto {
-    private long id;
+    private UUID id;
     private String organizationRefNumber;
     private PaymentMode paymentMode;
     private PaymentOrganization paymentOrganization;

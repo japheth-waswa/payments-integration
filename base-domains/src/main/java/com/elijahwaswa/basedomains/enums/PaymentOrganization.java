@@ -1,5 +1,5 @@
 package com.elijahwaswa.basedomains.enums;
 
 public enum PaymentOrganization {
-    MPESA,KCB,COOP
+    MPESA,AIRTEL,KCB,COOP
 }
