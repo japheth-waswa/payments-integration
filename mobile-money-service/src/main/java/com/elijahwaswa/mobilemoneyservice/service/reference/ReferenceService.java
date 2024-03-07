@@ -1,4 +1,4 @@
-package com.elijahwaswa.mobilemoneyservice.service.impl;
+package com.elijahwaswa.mobilemoneyservice.service.reference;
 
 import com.elijahwaswa.basedomains.utils.Helpers;
 import com.elijahwaswa.mobilemoneyservice.entity.Reference;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-//@AllArgsConstructor
 public class ReferenceService {
 
     @Autowired

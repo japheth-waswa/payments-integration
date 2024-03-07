@@ -2,6 +2,7 @@ package com.elijahwaswa.mobilemoneyservice.service.impl;
 
 import com.elijahwaswa.basedomains.utils.Helpers;
 import com.elijahwaswa.mobilemoneyservice.entity.Reference;
+import com.elijahwaswa.mobilemoneyservice.service.reference.ReferenceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
