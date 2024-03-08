@@ -11,9 +11,9 @@ import mpesa.util.TrxCodeType;
 public interface MoneyService {
     TransactionDto validateResponse(MpesaResponse mpesaResponse, ResponseParserType responseParserType);
 
-    TransactionDto initStkPush(MobileMoney mobileMoney,MobileMoneyShortcodeType mobileMoneyShortcodeType, STKTransactionType stkTransactionType, double amount, long phoneNumber, String briefDescription);
+    TransactionDto initStkPush(MobileMoney mobileMoney, MobileMoneyShortcodeType mobileMoneyShortcodeType, STKTransactionType stkTransactionType, double amount, long phoneNumber, String briefDescription);
 
-    TransactionDto checkStkStatus(MobileMoney mobileMoney,MobileMoneyShortcodeType mobileMoneyShortcodeType, STKTransactionType stkTransactionType, String checkoutRequestId);
+    TransactionDto checkStkStatus(MobileMoney mobileMoney,String transactionRef);
 
     TransactionDto registerUrls(MobileMoney mobileMoney, int businessShortCode);
 

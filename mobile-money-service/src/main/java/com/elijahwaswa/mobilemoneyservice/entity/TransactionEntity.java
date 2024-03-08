@@ -54,5 +54,7 @@ public class TransactionEntity {
     private String timeoutUrl;
     private String name;
     private String description;
+    private String message;
     private TrxCodeType trxCodeType;
+    private LocalDateTime mobileMoneyTransactionDate;
 }

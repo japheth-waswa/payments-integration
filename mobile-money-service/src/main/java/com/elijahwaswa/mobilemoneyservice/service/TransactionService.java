@@ -13,9 +13,11 @@ import java.util.List;
 //todo update by id,transactionRef,mobileMoneyRef etc
 
 public interface TransactionService {
-
     String generateUniqueRefKey(TransactionEntity transactionEntity);
     TransactionDto saveTransaction(TransactionEntity transactionEntity);
+    TransactionDto updateTransaction(TransactionEntity transactionEntity);
+    TransactionEntity getTransaction(String transactionRef);
+    TransactionEntity getTransaction(String merchantRequestId,String checkoutRequestId);
     List<TransactionDto> getTransactions(int pageNumber,int pageSize);
     List<TransactionDto> getTransactions(int pageNumber, int pageSize, BigDecimal amount);
     List<TransactionDto> getTransactions(int pageNumber, int pageSize, ConditionOperator conditionOperator,BigDecimal conditionalAmount);

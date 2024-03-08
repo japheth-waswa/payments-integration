@@ -2,3 +2,4 @@
 .DS_Store
 .env
 application-dev.properties
+mobile-money-service/src/test/resources/application.properties

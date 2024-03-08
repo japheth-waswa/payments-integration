@@ -50,63 +50,91 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public TransactionDto updateTransaction(TransactionEntity transactionEntity) {
+        transactionRepository.save(transactionEntity);
+        return modelMapper.map(transactionEntity, TransactionDto.class);
+    }
+
+    @Override
+    public TransactionEntity getTransaction(String transactionRef) {
+        TransactionEntity transactionEntity = transactionRepository.findByTransactionRef(transactionRef);
+        if (transactionEntity == null) {
+            throw new ResourceNotFoundException(ErrorCode.TRANSACTIONS_NOT_FOUND, "Transaction with that transaction ref does not exist");
+        }
+        return transactionEntity;
+    }
+
+    @Override
+    public TransactionEntity getTransaction(String merchantRequestId,String checkoutRequestId) {
+        TransactionEntity transactionEntity = transactionRepository.findByMerchantRequestIdAndCheckoutRequestId(merchantRequestId, checkoutRequestId);
+        if (transactionEntity == null) {
+            throw new ResourceNotFoundException(ErrorCode.TRANSACTIONS_NOT_FOUND, "Transaction with that merchant id and checkout request id does not exist");
+        }
+        return transactionEntity;
+    }
+
+    @Override
     public List<TransactionDto> getTransactions(int pageNumber, int pageSize) {
-        Page<TransactionEntity> transactions  = transactionRepository.findAll(Helpers.buildPageable(pageNumber,pageSize));
-        return parseTransactions(transactions,String.format("Transactions not found with page number [%s] and page size[%s]",pageNumber,pageSize));
+        Page<TransactionEntity> transactions = transactionRepository.findAll(Helpers.buildPageable(pageNumber, pageSize));
+        return parseTransactions(transactions, String.format("Transactions not found with page number [%s] and page size[%s]", pageNumber, pageSize));
     }
 
     @Override
     public List<TransactionDto> getTransactions(int pageNumber, int pageSize, BigDecimal amount) {
-        return parseTransactions(transactionRepository.findAllByAmount(amount,Helpers.buildPageable(pageNumber,pageSize)),
-                String.format("Transactions for this amount (%s) and within the range with page number(%s) and page size(%s) not found",amount,pageNumber,pageSize));
+        return parseTransactions(transactionRepository.findAllByAmount(amount, Helpers.buildPageable(pageNumber, pageSize)),
+                String.format("Transactions for this amount (%s) and within the range with page number(%s) and page size(%s) not found", amount, pageNumber, pageSize));
     }
 
     @Override
-    public List<TransactionDto> getTransactions(int pageNumber, int pageSize,ConditionOperator conditionOperator, BigDecimal conditionalAmount) {
-        Page<TransactionEntity>  transactions;
-        switch(conditionOperator){
-            case GREATER_THAN->transactions= transactionRepository.findAllByAmountGreaterThan(conditionalAmount,Helpers.buildPageable(pageNumber,pageSize));
-            case GREATER_THAN_OR_EQUAL_TO->transactions= transactionRepository.findAllByAmountGreaterThanEqual(conditionalAmount,Helpers.buildPageable(pageNumber,pageSize));
-            case LESS_THAN->transactions= transactionRepository.findAllByAmountLessThan(conditionalAmount,Helpers.buildPageable(pageNumber,pageSize));
-            case LESS_THAN_OR_EQUAL_TO->transactions= transactionRepository.findAllByAmountLessThanEqual(conditionalAmount,Helpers.buildPageable(pageNumber,pageSize));
-            default->transactions= null;
+    public List<TransactionDto> getTransactions(int pageNumber, int pageSize, ConditionOperator conditionOperator, BigDecimal conditionalAmount) {
+        Page<TransactionEntity> transactions;
+        switch (conditionOperator) {
+            case GREATER_THAN ->
+                    transactions = transactionRepository.findAllByAmountGreaterThan(conditionalAmount, Helpers.buildPageable(pageNumber, pageSize));
+            case GREATER_THAN_OR_EQUAL_TO ->
+                    transactions = transactionRepository.findAllByAmountGreaterThanEqual(conditionalAmount, Helpers.buildPageable(pageNumber, pageSize));
+            case LESS_THAN ->
+                    transactions = transactionRepository.findAllByAmountLessThan(conditionalAmount, Helpers.buildPageable(pageNumber, pageSize));
+            case LESS_THAN_OR_EQUAL_TO ->
+                    transactions = transactionRepository.findAllByAmountLessThanEqual(conditionalAmount, Helpers.buildPageable(pageNumber, pageSize));
+            default -> transactions = null;
         }
-        return parseTransactions(transactions,String.format("Transactions not found with the conditional operator(%s) with page number(%s) and page size(%s)",conditionOperator.name(),pageNumber,pageSize));
+        return parseTransactions(transactions, String.format("Transactions not found with the conditional operator(%s) with page number(%s) and page size(%s)", conditionOperator.name(), pageNumber, pageSize));
     }
 
     @Override
     public List<TransactionDto> getTransactions(int pageNumber, int pageSize, TransactionStatus transactionStatus) {
-        return parseTransactions(transactionRepository.findAllByTransactionStatus(transactionStatus,Helpers.buildPageable(pageNumber,pageSize)),
-                String.format("Transactions not found for status(%s) with page number(%s) and page size(%s)",transactionStatus,pageNumber,pageSize));
+        return parseTransactions(transactionRepository.findAllByTransactionStatus(transactionStatus, Helpers.buildPageable(pageNumber, pageSize)),
+                String.format("Transactions not found for status(%s) with page number(%s) and page size(%s)", transactionStatus, pageNumber, pageSize));
     }
 
     @Override
     public List<TransactionDto> getTransactions(int pageNumber, int pageSize, MobileMoney mobileMoney) {
-        return parseTransactions(transactionRepository.findAllByMobileMoney(mobileMoney,Helpers.buildPageable(pageNumber,pageSize)),
-                String.format("Transactions not found for mobile money(%s) with page number(%s) and page size(%s)",mobileMoney,pageNumber,pageSize));
+        return parseTransactions(transactionRepository.findAllByMobileMoney(mobileMoney, Helpers.buildPageable(pageNumber, pageSize)),
+                String.format("Transactions not found for mobile money(%s) with page number(%s) and page size(%s)", mobileMoney, pageNumber, pageSize));
     }
 
     @Override
     public List<TransactionDto> getTransactions(int pageNumber, int pageSize, TransactionType transactionType) {
-        return parseTransactions(transactionRepository.findAllByTransactionType(transactionType,Helpers.buildPageable(pageNumber,pageSize)),
-                String.format("Transactions not found for transaction type(%s) with page number(%s) and page size(%s)",transactionType,pageNumber,pageSize));
+        return parseTransactions(transactionRepository.findAllByTransactionType(transactionType, Helpers.buildPageable(pageNumber, pageSize)),
+                String.format("Transactions not found for transaction type(%s) with page number(%s) and page size(%s)", transactionType, pageNumber, pageSize));
     }
 
     @Override
     public List<TransactionDto> getTransactions(int pageNumber, int pageSize, String transactionRef) {
-        return parseTransactions(transactionRepository.findAllByTransactionRef(transactionRef,Helpers.buildPageable(pageNumber,pageSize)),
-                String.format("Transactions not found for transaction ref(%s) with page number(%s) and page size(%s)",transactionRef,pageNumber,pageSize));
+        return parseTransactions(transactionRepository.findAllByTransactionRef(transactionRef, Helpers.buildPageable(pageNumber, pageSize)),
+                String.format("Transactions not found for transaction ref(%s) with page number(%s) and page size(%s)", transactionRef, pageNumber, pageSize));
     }
 
     @Override
     public List<TransactionDto> getTransactions(int pageNumber, int pageSize, String transactionRef, MobileMoney mobileMoney) {
-        return parseTransactions(transactionRepository.findAllByTransactionRefAndMobileMoney(transactionRef,mobileMoney,Helpers.buildPageable(pageNumber,pageSize)),
-                String.format("Transactions not found for transaction ref(%s) and mobile money(%s) with page number(%s) and page size(%s)",transactionRef,mobileMoney,pageNumber,pageSize));
+        return parseTransactions(transactionRepository.findAllByTransactionRefAndMobileMoney(transactionRef, mobileMoney, Helpers.buildPageable(pageNumber, pageSize)),
+                String.format("Transactions not found for transaction ref(%s) and mobile money(%s) with page number(%s) and page size(%s)", transactionRef, mobileMoney, pageNumber, pageSize));
     }
 
     @Override
     public List<TransactionDto> getTransactions(int pageNumber, int pageSize, MobileMoney mobileMoney, String mobileMoneyRef) {
-        return parseTransactions(transactionRepository.findAllByMobileMoneyRefAndMobileMoney(mobileMoneyRef,mobileMoney,Helpers.buildPageable(pageNumber,pageSize)),
-                String.format("Transactions not found for mobile money ref(%s) and mobile money(%s) with page number(%s) and page size(%s)",mobileMoneyRef,mobileMoney,pageNumber,pageSize));
+        return parseTransactions(transactionRepository.findAllByMobileMoneyRefAndMobileMoney(mobileMoneyRef, mobileMoney, Helpers.buildPageable(pageNumber, pageSize)),
+                String.format("Transactions not found for mobile money ref(%s) and mobile money(%s) with page number(%s) and page size(%s)", mobileMoneyRef, mobileMoney, pageNumber, pageSize));
     }
 }

@@ -17,6 +17,8 @@ public class TransactionDto {
     private MobileMoney mobileMoney;
     private TransactionType transactionType;
     private STKTransactionType stkTransactionType;
+    private int creditBusinessShortCode;//receiving
+    private int debitBusinessShortCode;//sending
     private BigDecimal amount;
     private String transactionRef;
     private String mobileMoneyRef;
@@ -27,6 +29,7 @@ public class TransactionDto {
     private String checkoutRequestId;
     private String name;
     private String description;
+    private String message;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

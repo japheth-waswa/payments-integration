@@ -11,6 +11,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.math.BigDecimal;
 
 public interface TransactionRepository extends JpaRepository<TransactionEntity, String> {
+    TransactionEntity findByTransactionRef(String transactionRef);
+    TransactionEntity findByMerchantRequestIdAndCheckoutRequestId(String merchantRequestId,String checkoutRequestId);
+
     Page<TransactionEntity> findAllByAmount(BigDecimal amount, Pageable pageable);
 
     Page<TransactionEntity> findAllByAmountGreaterThan(BigDecimal amount, Pageable pageable);
