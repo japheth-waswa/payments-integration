@@ -40,19 +40,25 @@ public class TransactionEntity {
     private STKTransactionType stkTransactionType;
     private int creditBusinessShortCode;//receiving
     private int debitBusinessShortCode;//sending
-    private long phoneNumber;
+    private String phoneNumber;
     private BigDecimal amount;
     private String transactionRef;
     private String mobileMoneyRef;
     private int responseCode;
     private int resultCode;
     private String conversationId;
+    private String convoId;
     private String merchantRequestId;
     private String checkoutRequestId;
+    private String requestId;
     private String taxPrn;
     private String callbackUrl;
     private String timeoutUrl;
-    private String name;
+    private String validationUrl;
+    private String confirmationUrl;
+    private String firstName;
+    private String middleName;
+    private String lastName;
     private String description;
     private String message;
     private TrxCodeType trxCodeType;

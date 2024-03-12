@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 public interface TransactionRepository extends JpaRepository<TransactionEntity, String> {
     TransactionEntity findByTransactionRef(String transactionRef);
     TransactionEntity findByMerchantRequestIdAndCheckoutRequestId(String merchantRequestId,String checkoutRequestId);
+    TransactionEntity findByConversationIdAndConvoId(String conversationId, String convoId);
+    TransactionEntity findByRequestId(String requestId);
 
     Page<TransactionEntity> findAllByAmount(BigDecimal amount, Pageable pageable);
 

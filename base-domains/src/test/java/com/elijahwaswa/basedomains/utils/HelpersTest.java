@@ -20,4 +20,11 @@ class HelpersTest {
         assertEquals("00aa",Helpers.incrementString("9zz"));
         assertEquals("0001",Helpers.incrementString("0000"));
     }
+
+    @Test
+    void phoneNumbersMatch() {
+        assertTrue(Helpers.phoneNumbersMatch("254704313679","25470****679"));
+        assertTrue(Helpers.phoneNumbersMatch("254719737698","25471****698"));
+        assertFalse(Helpers.phoneNumbersMatch("254719737698","25471****788"));
+    }
 }

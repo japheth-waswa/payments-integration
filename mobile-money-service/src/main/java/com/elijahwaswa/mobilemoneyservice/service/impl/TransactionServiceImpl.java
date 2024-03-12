@@ -65,10 +65,27 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionEntity getTransaction(String merchantRequestId,String checkoutRequestId) {
+    public TransactionEntity getTransaction(String merchantRequestId, String checkoutRequestId) {
         TransactionEntity transactionEntity = transactionRepository.findByMerchantRequestIdAndCheckoutRequestId(merchantRequestId, checkoutRequestId);
         if (transactionEntity == null) {
             throw new ResourceNotFoundException(ErrorCode.TRANSACTIONS_NOT_FOUND, "Transaction with that merchant id and checkout request id does not exist");
+        }
+        return transactionEntity;
+    }
+
+    @Override
+    public TransactionEntity getTransactionByConversationId(String conversationId, String convoId) {
+        TransactionEntity transactionEntity = transactionRepository.findByConversationIdAndConvoId(conversationId, convoId);
+        if (transactionEntity == null) {
+            throw new ResourceNotFoundException(ErrorCode.TRANSACTIONS_NOT_FOUND, "Transaction with that conversation id and convo id does not exist");
+        }
+        return transactionEntity;
+    }
+    @Override
+    public TransactionEntity getTransactionByRequestId(String requestId) {
+        TransactionEntity transactionEntity = transactionRepository.findByRequestId(requestId);
+        if (transactionEntity == null) {
+            throw new ResourceNotFoundException(ErrorCode.TRANSACTIONS_NOT_FOUND, "Transaction with that request id does not exist");
         }
         return transactionEntity;
     }

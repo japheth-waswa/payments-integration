@@ -67,4 +67,8 @@ public class Helpers {
         return new String(charArray);
     }
 
+    public static boolean phoneNumbersMatch(String phoneNumber1,String phoneNumber2){
+        return phoneNumber1.substring(0,5).equals(phoneNumber2.substring(0,5)) && phoneNumber1.substring(9).equals(phoneNumber2.substring(9));
+    }
+
 }

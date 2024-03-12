@@ -18,6 +18,8 @@ public interface TransactionService {
     TransactionDto updateTransaction(TransactionEntity transactionEntity);
     TransactionEntity getTransaction(String transactionRef);
     TransactionEntity getTransaction(String merchantRequestId,String checkoutRequestId);
+    TransactionEntity getTransactionByConversationId(String conversationId,String convoId);
+    TransactionEntity getTransactionByRequestId(String requestId);
     List<TransactionDto> getTransactions(int pageNumber,int pageSize);
     List<TransactionDto> getTransactions(int pageNumber, int pageSize, BigDecimal amount);
     List<TransactionDto> getTransactions(int pageNumber, int pageSize, ConditionOperator conditionOperator,BigDecimal conditionalAmount);

@@ -25,9 +25,13 @@ public class TransactionDto {
     private int responseCode;
     private int resultCode;
     private String conversationId;
+    private String convoId;
     private String merchantRequestId;
     private String checkoutRequestId;
-    private String name;
+    private String requestId;
+    private String firstName;
+    private String middleName;
+    private String lastName;
     private String description;
     private String message;
     private LocalDateTime createdAt;

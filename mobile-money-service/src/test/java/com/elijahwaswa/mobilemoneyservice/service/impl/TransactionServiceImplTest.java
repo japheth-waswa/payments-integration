@@ -56,7 +56,7 @@ class TransactionServiceImplTest {
         transactionEntity1.setMobileMoney(MobileMoney.MPESA);
         transactionEntity1.setTransactionType(TransactionType.B2B_BUY_GOODS);
         transactionEntity1.setCreditBusinessShortCode(90290);
-        transactionEntity1.setPhoneNumber(254704313679L);
+        transactionEntity1.setPhoneNumber(String.valueOf(254704313679L));
         transactionEntity1.setAmount(new BigDecimal(459_023));
         transactionEntity1.setTransactionRef(generateRandomStr());
         transactionEntity1.setMobileMoneyRef(generateRandomStr());
@@ -68,7 +68,7 @@ class TransactionServiceImplTest {
         transactionEntity2.setMobileMoney(MobileMoney.AIRTEL);
         transactionEntity2.setTransactionType(TransactionType.STK_QUERY);
         transactionEntity2.setCreditBusinessShortCode(49202);
-        transactionEntity2.setPhoneNumber(254704313679L);
+        transactionEntity2.setPhoneNumber(String.valueOf(254704313679L));
         transactionEntity2.setAmount(new BigDecimal(1_234_502));
         transactionEntity2.setTransactionRef(generateRandomStr());
         transactionEntity2.setMobileMoneyRef(generateRandomStr());
@@ -82,7 +82,7 @@ class TransactionServiceImplTest {
         transactionEntity3.setTransactionType(TransactionType.B2B_BUY_GOODS);
         transactionEntity3.setCreditBusinessShortCode(3093);
         transactionEntity3.setDebitBusinessShortCode(67201);
-        transactionEntity3.setPhoneNumber(254704313679L);
+        transactionEntity3.setPhoneNumber(String.valueOf(254704313679L));
         transactionEntity3.setAmount(new BigDecimal(459_023));
         transactionEntity3.setTransactionRef(generateRandomStr());
         transactionEntity3.setMobileMoneyRef(generateRandomStr());
@@ -97,7 +97,7 @@ class TransactionServiceImplTest {
         transactionEntity4.setMobileMoney(MobileMoney.AIRTEL);
         transactionEntity4.setTransactionType(TransactionType.B2B_PAY_BILL);
         transactionEntity4.setCreditBusinessShortCode(49202);
-        transactionEntity4.setPhoneNumber(254704313679L);
+        transactionEntity4.setPhoneNumber(String.valueOf(254704313679L));
         transactionEntity4.setAmount(new BigDecimal(1_234_503));
         transactionEntity4.setTransactionRef(generateRandomStr());
         transactionEntity4.setMobileMoneyRef(generateRandomStr());
@@ -141,7 +141,7 @@ class TransactionServiceImplTest {
 
         //get the transaction entity
         TransactionEntity transactionEntity = transactionService.getTransaction(transactionEntity3.getTransactionRef());
-        transactionEntity.setName("peter");
+        transactionEntity.setFirstName("peter");
         TransactionDto transactionDto = transactionService.updateTransaction(transactionEntity);
         System.out.println(transactionDto);
 
@@ -374,5 +374,36 @@ class TransactionServiceImplTest {
         assertNotNull(transaction);
         assertEquals(transactionEntity2.getMerchantRequestId(),transaction.getMerchantRequestId());
         assertEquals(transactionEntity2.getCheckoutRequestId(),transaction.getCheckoutRequestId());
+    }
+
+    @Test
+    void getTransactionByConversationId() {
+        transactionEntity4.setConversationId(UUID.randomUUID().toString());
+        transactionEntity4.setConvoId(UUID.randomUUID().toString());
+
+        transactionEntity2.setConversationId(UUID.randomUUID().toString());
+        transactionEntity2.setConvoId(UUID.randomUUID().toString());
+
+        transactionService.saveTransaction(transactionEntity4);
+        transactionService.saveTransaction(transactionEntity3);
+        transactionService.saveTransaction(transactionEntity2);
+
+        TransactionEntity transactionEntity = transactionService.getTransactionByConversationId(transactionEntity4.getConversationId(), transactionEntity4.getConvoId());
+        assertNotNull(transactionEntity);
+        assertEquals(transactionEntity4.getTransactionRef(),transactionEntity.getTransactionRef());
+    }
+
+    @Test
+    void getTransactionByRequestId() {
+        transactionEntity4.setRequestId(UUID.randomUUID().toString());
+        transactionEntity2.setRequestId(UUID.randomUUID().toString());
+
+        transactionService.saveTransaction(transactionEntity4);
+        transactionService.saveTransaction(transactionEntity2);
+
+        TransactionEntity transactionEntity = transactionService.getTransactionByRequestId(transactionEntity2.getRequestId());
+        assertNotNull(transactionEntity);
+        assertEquals(transactionEntity2.getTransactionRef(),transactionEntity.getTransactionRef());
+        assertEquals(transactionEntity2.getRequestId(),transactionEntity.getRequestId());
     }
 }
